@@ -1,0 +1,190 @@
+<head>
+  <style>
+    /* General body style */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f7f9fc;
+      padding: 20px;
+      color: #333;
+    }
+
+    /* Form container */
+    h2 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    /* Styling the form itself */
+    form {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Form groups */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    /* Input styling */
+    .form-control {
+      width: calc(100% - 20px); /* Ensures consistent width for all input fields */
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccd1d9;
+      border-radius: 5px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-control:focus {
+      border-color: #5cb85c;
+      box-shadow: 0 0 8px rgba(92, 184, 92, 0.2);
+      outline: none;
+    }
+
+    /* Labels */
+    label {
+      font-weight: 600;
+      color: #34495e;
+    }
+
+    /* Button styling */
+    .btn {
+      background-color: #5cb85c;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background-color: #4cae4c;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Row layout adjustments */
+    .row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .col-md-6 {
+      flex: 0 0 48%;
+    }
+
+    .col-md-12 {
+      flex: 0 0 100%;
+    }
+
+    /* Reduce space between inputs */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    /* Add some spacing to the form and inputs */
+    form input[type="text"],
+    form input[type="number"],
+    form input[type="date"] {
+      display: block;
+      width: 100%;
+    }
+
+    /* Flash messages */
+    .alert {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      color: #fff;
+      background-color: #5cb85c;
+    }
+
+    .alert.alert-danger {
+      background-color: #d9534f;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Register Imported Item</h2>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div>
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <form method="POST" action="{{ url_for('main.register_imported_item', declaration_number=item.declaration_number, item_name=item.item_name) }}">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="declaration_number">Declaration Number</label>
+          <input type="text" class="form-control" id="declaration_number" value="{{ item.declaration_number }}" disabled>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="item_name">Item Name</label>
+          <input type="text" class="form-control" id="item_name" value="{{ item.item_name }}" disabled>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input type="number" class="form-control" id="amount" name="amount" required>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="amount_unit">Amount Unit</label>
+          <input type="text" class="form-control" id="amount_unit" name="amount_unit" placeholder="e.g. Bag" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="measurement">Measurement</label>
+          <input type="text" class="form-control" id="measurement" name="measurement" required>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="measurement_unit">Measurement Unit</label>
+          <input type="text" class="form-control" id="measurement_unit" name="measurement_unit" placeholder="e.g. KG" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input type="date" class="form-control" id="date" name="date" required>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register Imported Item</button>
+  </form>
+</body>

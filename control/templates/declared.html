@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Items</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            max-width: 50%;
+            margin: auto;
+        }
+        .measurement-input {
+            width: 200px;
+        }
+        .amount-input {
+            width: 200px;  
+        }
+        .measurement-input .form-select {
+            width: 40%; /* 2/3 width */
+        }
+        .measurement-input .form-control {
+            width: 40%; /* 1/3 width */
+        }
+        .amount-input .form-select {
+            width: 40%; /* 2/3 width */
+        }
+        .amount-input .form-control {
+            width: 60%; /* 1/3 width */
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .alert {
+            margin-top: 20px;
+        }
+        .btn-primary {
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+        }
+        .display {
+            margin-top: 20px;
+            max-width: 100%;
+            margin: auto;
+        }
+        .permanent {
+            width: 50%;
+            margin-left: 0;
+        }
+        table {
+            width: 80%;
+        }
+        th, td {
+            text-align: center;
+            padding: 10px;
+        }
+        th {
+            background-color: #f2f2f2;
+            width: auto;
+        }
+        .btn {
+            font-size: 0.875rem;
+        }
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script>
+        function addItem() {
+            let itemsContainer = document.getElementById('items-container');
+            let itemTemplate = document.getElementById('item-template').innerHTML;
+            let dateValue = document.getElementById('main-date').value;
+
+            itemsContainer.insertAdjacentHTML('beforeend', itemTemplate);
+
+            let newItemDateInput = itemsContainer.querySelector('tr:last-child input[name="dates[]"]');
+            newItemDateInput.value = dateValue;
+        }
+
+        function removeItem(element) {
+            element.closest('tr').remove();
+        }
+
+        $(document).ready(function() {
+            $('#items-container').DataTable({
+                paging: false,
+                searching: false,
+                ordering: false,
+                info: false
+            });
+        });
+    </script>
+</head>
+<body>
+    <a href="{{ url_for('main.home') }}" style="margin-left: 30px;" background-color="transparent;"color="#6DB269;" text-decoration="none;">Home</a>
+    <div class="container">
+        <h1 class="text-center">Register Declaration</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert alert-danger" role="alert">
+                    {% for category, message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('main.register_declared') }}" method="POST" class="mt-4">
+            <div class="mb-3 permanent">
+                <label for="declaration_number" class="form-label">Declaration Number:</label>
+                <input type="text" class="form-control" name="declaration_number" required>
+            </div>
+            <div class="mb-3 permanent">
+                <label for="date" class="form-label">Date:</label>
+                <input type="date" id="main-date" class="form-control" name="date[]" required>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table display" id="items-container">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Amount</th>
+                            <th>Measurement</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="item">
+                            <td><input type="text" class="form-control" name="item_name[]" required></td>
+                            <td>
+                                <div class="input-group amount-input">
+                                    <input type="number" class="form-control" name="amount[]" required>
+                                    <select class="form-select" name="amount_unit[]">
+                                        <option value="Bag">Bag</option>
+                                        <option value="Canister">Canister</option>
+                                        <option value="Bundle">Bundle</option>
+                                        <option value="Ton">Ton</option>
+                                        <option value="Roll">Roll</option>
+                                        <option value="Carton">Carton</option>
+                                        <option value="Carton">Pieces</option>
+                                        <!-- Add more options as needed -->
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group measurement-input">
+                                    <input type="number" step="any" class="form-control" name="measurement[]" required>
+                                    <select class="form-select" name="measurement_unit[]">
+                                        <option value="KG/Bag">KG/Bag</option>
+                                        <option value="Litre/Box">Litre/Canister</option>
+                                        <option value="Box">Metre/Roll</option>
+                                        <option value="Box">Pieces/Carton</option>
+                                        <option value="Box">Tubes/Bundle</option>
+                                        <option value="Box">Pieces/Ton</option>
+                                        <option value="Box">Pieces/Pieces</option>
+                                        <!-- Add more options as needed -->
+                                    </select>
+                                </div>
+                            </td>
+                            <td><button type="button" class="btn btn-danger" onclick="removeItem(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="button" class="btn btn-secondary" onclick="addItem()">Add Another Item</button>
+            </div>
+        </form>
+
+        <!-- Hidden Template for New Items -->
+        <template id="item-template">
+            <tr class="item">
+                <td><input type="text" class="form-control" name="item_name[]" required></td>
+                <td>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="amount[]" required>
+                        <select class="form-select" name="amount_unit[]">
+                            <option value="Bag">Bag</option>
+                            <option value="Canister">Canister</option>
+                            <option value="Bundle">Bundle</option>
+                            <option value="Ton">Ton</option>
+                            <option value="Roll">Roll</option>
+                            <option value="Carton">Carton</option>
+                            <option value="Carton">Pieces</option>
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group">
+                        <input type="number" step="any" class="form-control" name="measurement[]" required>
+                        <select class="form-select" name="measurement_unit[]">
+                            <option value="KG/Bag">KG/Bag</option>
+                            <option value="Litre/Box">Litre/Canister</option>
+                            <option value="Box">Metre/Roll</option>
+                            <option value="Box">Pieces/Carton</option>
+                            <option value="Box">Tubes/Bundle</option>
+                            <option value="Box">Pieces/Ton</option>
+                            <option value="Box">Pieces/Pieces</option>
+                        </select>
+                    </div>
+                </td>
+                <td><button type="button" class="btn btn-danger" onclick="removeItem(this)">Remove</button></td>
+            </tr>
+        </template>
+    </div>
+    <div class="container">
+        <h2 class="mt-5">Registered Declarations</h2>
+
+        <!-- Search Form -->
+        <form action="{{ url_for('main.display_declarations') }}" method="GET" class="mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Search declarations..." value="{{ request.args.get('search', '') }}" margin-left=80px>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+        
+        <a href="{{ url_for('main.export_pdf') }}" class="btn btn-success mb-3">Export as PDF</a>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Declaration Number</th>
+                    <th>Item Name</th>
+                    <th>Amount</th>
+                    <th>Measurement</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for declaration in declarations %}
+                    <tr>
+                        <td>{{ declaration.declaration_number }}</td>
+                        <td>{{ declaration.item_name }}</td>
+                        <td>{{ declaration.amount }} {{ declaration.amount_unit }}</td>
+                        <td>{{ declaration.measurement }} {{ declaration.measurement_unit }}</td>
+                        <td>{{ declaration.date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <!-- Next and Previous Links -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if declarations.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.display_declarations', page=declarations.prev_num, search=request.args.get('search', '')) }}">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                {% endif %}
+        
+                {% if declarations.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.display_declarations', page=declarations.next_num, search=request.args.get('search', '')) }}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+</body>
+</html>

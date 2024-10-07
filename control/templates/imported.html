@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Items</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+            color: #2c3e50;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #2980b9;
+        }
+
+        /* Button Styling */
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 10px; /* Add margin for spacing */
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 20%;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+
+        /* Table Styles */
+        .table {
+            width: 50%; /* Reduced table width by 50% */
+            margin: 20px auto; /* Center the table */
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        .table th, .table td {
+            border: 2px solid #ccc;
+            padding: 10px;
+        }
+
+        .table thead {
+            background-color: #2980b9;
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-control {
+                width: 80%;
+            }
+
+            .table {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="text-center">
+        <a href="{{ url_for('main.home') }}" class="btn btn-primary">Home</a>
+    </div>
+
+    <h2>Search for Items by Declaration Number</h2>
+
+    <form method="POST" action="{{ url_for('main.search_registered') }}">
+        <div class="form-group">
+            <label for="declaration_number">Declaration Number</label>
+            <input type="text" class="form-control" id="declaration_number" name="declaration_number" required>
+            <button type="submit" class="btn btn-primary mt-2">Search</button>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+        </div>
+    </form>
+
+    {% if items %}
+    <h3>Items under Declaration {{ declaration_number.declaration_number }}</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Amount</th>
+                <th>Measurement</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.item_name }}</td>
+                <td>{{ item.amount }} {{ item.declaration_number.amount_unit }}</td>
+                <td>{{ item.measurement }} {{ item.declaration_number.measurement_unit }}</td>
+                <td>{{ declaration_number.date }}</td>
+                <td>
+                    <a href="{{ url_for('main.register_imported_item', declaration_number=item.declaration_number, item_name=item.item_name) }}" class="btn btn-success">
+                        Register Imported
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+</body>
+</html>
