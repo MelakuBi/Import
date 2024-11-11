@@ -1,0 +1,6 @@
+<h2>Actions Log</h2>
+<ul>
+    {% for action in actions %}
+        <li>{{ action.action }} - {{ action.timestamp }}</li>
+    {% endfor %}
+</ul>

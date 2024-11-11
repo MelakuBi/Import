@@ -1,27 +1,37 @@
 from flask import render_template, request, redirect, url_for, Blueprint, flash
-from control.models import Declared, Imported, Balance, db
+from control.models import Declared, Imported, Balance, Ticket
+from control.extensions import db
 from flask import make_response
 from reportlab.lib.pagesizes import letter
 from sqlalchemy import or_
 from reportlab.pdfgen import canvas
 from io import BytesIO
 from urllib.parse import quote, unquote
+from control.auth import login
+ 
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from control.models import User
+
  
  
 views = Blueprint('main', __name__)
+
+
  
 def calc_balance():
     current_balance = Balance.amount - Imported.amount
     return current_balance
 
-
-#@views.route('/')
-#def index():
-#    return render_template('/index.html')
-
 @views.route('/')
-def home():
-    return render_template('index.html')  # Ensure you have this template created
+def index():
+   message = "show_login_form = True"
+   return render_template('/index.html', form_msg=message)
+
+@views.route('/login')
+def getlogin():
+    message = login()
+
+    return  message # Ensure you have this template created
 
 @views.route('/register', methods=['GET', 'POST'])
 def register_declared():
@@ -105,11 +115,21 @@ def search_registered():
 
         if existing_declared:
             # Step 2: Get all items under the declaration number
-            declared_items = Balance.query.filter_by(declaration_number=declaration_number).all()
+            balance_items = Balance.query.filter_by(declaration_number=declaration_number).all()
+            declared_items = Declared.query.filter_by(declaration_number=declaration_number).all()
+            existing = {
+                item.item_name: {
+                    "declaration_number": item.declaration_number,
+                    "amount_unit": item.amount_unit,
+                    "measurement_unit": item.measurement_unit,
+                    "date": item.date
+                }
+                for item in declared_items
+            }
 
-            if declared_items:
+            if balance_items:
                 # Render template with the declared items
-                return render_template('imported.html', items=declared_items, declaration_number=existing_declared)
+                return render_template('imported.html', items=balance_items, existing=existing)
             else:
                 flash(f'No items found for declaration {declaration_number}.', 'error')
         else:
@@ -253,4 +273,71 @@ def export_pdf():
 
     return response
 
- 
+@views.route('/tickets/new', methods=['GET', 'POST'])
+def create_ticket():
+    if request.method == 'POST':
+        ticket_no = request.form.get('ticket_no')
+        plate_no = request.form.get('plate_no')
+        declaration_number = request.form.get('declaration_number')
+
+        # Create a new Ticket instance
+        new_ticket = Ticket(
+            ticket_no=ticket_no,
+            plate_no=plate_no,
+            declaration_number=declaration_number
+        )
+
+        # Add the new ticket to the database
+        db.session.add(new_ticket)
+        db.session.commit()
+
+        flash('Ticket created successfully!', 'success')
+        return redirect(url_for('main.create_ticket'))
+
+    # Fetch existing declaration numbers for the dropdown
+    declarations = Imported.query.all()
+    return render_template('create_ticket.html', imports=declarations)
+
+@views.route('/tickets', methods=['GET'])
+def list_tickets():
+    search_ticket_no = request.args.get('ticket_no')
+    
+    if search_ticket_no:
+        tickets = Ticket.query.filter(Ticket.ticket_no.ilike(f'%{search_ticket_no}%')).all()
+    else:
+        tickets = Ticket.query.all()
+    
+    ticket_data = []
+    
+    for ticket in tickets:
+        imported_item = Imported.query.filter_by(declaration_number=ticket.declaration_number).first()
+        ticket_data.append({
+            'ticket_no': ticket.ticket_no,
+            'plate_no': ticket.plate_no,
+            'declaration_number': ticket.declaration_number,
+            'item_name': imported_item.item_name if imported_item else None,
+            'amount': imported_item.amount if imported_item else None
+        })
+
+    return render_template('list_tickets.html', ticket_data=ticket_data, search_ticket_no=search_ticket_no) 
+
+@views.route('/print_ticket/<ticket_no>', methods=['GET'])
+def print_ticket(ticket_no):
+    # Fetch a single ticket based on ticket_no
+    ticket = Ticket.query.filter_by(ticket_no=ticket_no).first()
+    
+    if not ticket:
+        return "Ticket not found", 404  # Handle case where ticket doesn't exist
+
+    # Fetch imported items related to the ticket
+    imported_items = Imported.query.filter_by(declaration_number=ticket.declaration_number).all()
+
+    # Prepare the ticket_info dictionary to pass to the template
+    ticket_info = {
+        'ticket_no': ticket.ticket_no,
+        'plate_no': ticket.plate_no,
+        'declaration_number': ticket.declaration_number,
+        'imported_items': [{'item_name': item.item_name, 'amount': item.amount} for item in imported_items]
+    }
+
+    return render_template('print_ticket.html', ticket_info=ticket_info)

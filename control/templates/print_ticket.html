@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-custom">        
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <!-- Dropdown Menu -->
+            <li class="nav-item" style="margin-left: 1500%;">
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+            </li>
+        </ul>
+    </div>
+    
+</nav>
+{% endblock %}
+
+{% block slide %}
+<!-- Leave this block empty if you don't want any slides -->
+{% endblock %}
+
+{% block content %}
+
+{% if ticket_info %}
+    <div class="container mt-5">
+        <p>Ticket Details</p>
+        <p><strong>Ticket No:</strong> {{ ticket_info.ticket_no }}</p>
+        <p><strong>Plate No:</strong> {{ ticket_info.plate_no }}</p>
+        <p><strong>Declaration Number:</strong> {{ ticket_info.declaration_number }}</p>
+
+        <p>Imported Items</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in ticket_info.imported_items %}
+                    <tr>
+                        <td>{{ item.item_name }}</td>
+                        <td>{{ item.amount }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p>No ticket information available.</p>
+{% endif %}
+ 
+    <button onclick="window.print();" class="btn btn-primary mt-4">Print</button>
+    <a href="{{ url_for('main.list_tickets') }}" class="btn btn-secondary mt-4">Back to Tickets</a>
+</div>
+{% endblock %}

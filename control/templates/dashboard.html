@@ -1,0 +1,6 @@
+<h2>Welcome, {{ current_user.msg }}</h2>
+<form method="POST" action="/dashboard">
+    <label for="action">Log Action:</label>
+    <input type="text" name="action" required>
+    <button type="submit">Log Action</button>
+</form>

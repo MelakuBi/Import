@@ -8,105 +8,158 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f7f7f7;
+            background-color: #f7f9fc;
+            padding: 20px;
             color: #333;
         }
+
+        /* Container styling */
         .container {
-            background-color: #fff;
-            padding: 30px;
+            background-color: #ffffff;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
         }
+
+        /* Heading styles */
         h2, h3 {
             text-align: center;
-            color: #007bff;
+            color: #2c3e50;
+            margin-bottom: 20px;
         }
+
+        /* Flash messages */
+        .alert {
+            font-size: 16px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: #fff;
+            background-color: #5cb85c;
+        }
+
+        .alert.alert-danger {
+            background-color: #d9534f;
+        }
+
+        /* Form styling */
         .form-label {
-            font-weight: bold;
+            font-weight: 600;
+            color: #34495e;
         }
-        .btn-primary {
-            background-color: #007bff;
+
+        .form-control {
+            width: calc(100% - 20px);
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccd1d9;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #5cb85c;
+            box-shadow: 0 0 8px rgba(92, 184, 92, 0.2);
+            outline: none;
+        }
+
+        /* Button styling */
+        .btn {
+            background-color: #5cb85c;
+            color: white;
+            padding: 12px 20px;
             border: none;
-            border-radius: 25px;
-            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            width: 100%;
         }
-        .btn-primary:hover {
-            background-color: #0056b3;
+
+        .btn:hover {
+            background-color: #4cae4c;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
+
+        /* Table styling */
         table {
-            margin: 0 auto;
-            width: 80%;
+            margin-top: 20px;
+            width: 100%;
             border-collapse: collapse;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         th, td {
             text-align: center;
             padding: 12px;
+            border: 1px solid #e1e1e1;
         }
+
         th {
             background-color: #007bff;
             color: white;
         }
+
         td {
             background-color: #f1f1f1;
-        }
-        .alert {
-            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Manage Balance</h2>
+    <a href="{{ url_for('users.dashboard') }}" style="margin-left: 30px;" background-color="transparent;"color="#6DB269;" text-decoration="none;">Home</a>
+    <div class="container">
+<div class="container">
+    <h2>Manage Balance</h2>
 
-        <!-- Flash messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="alert alert-dismissible fade show" role="alert">
-                    <ul>
-                    {% for category, message in messages %}
-                        <li class="alert alert-{{ category }}">{{ message }}</li>
-                    {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-        {% endwith %}
-
-        <!-- Form to input declaration number -->
-        <form action="{{ url_for('main.manage_balance') }}" method="POST" class="mt-4">
-            <div class="mb-3">
-                <label for="declaration_number" class="form-label">Declaration Number:</label>
-                <input type="text" class="form-control" id="declaration_number" name="declaration_number" placeholder="Enter declaration number" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Search</button>
-        </form>
-
-        <!-- Display the balance items if found -->
-        {% if balance_items %}
-        <h3 class="mt-5">Current Balance Items</h3>
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Declaration Number</th>
-                    <th>Item Name</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in balance_items %}
-                    <tr>
-                        <td>{{ item.declaration_number }}</td>
-                        <td>{{ item.item_name }}</td>
-                        <td>{{ item.amount }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <p class="mt-4 text-center">No items to display. Please search using a declaration number.</p>
-        {% endif %}
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div>
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
     </div>
+    {% endif %}
+    {% endwith %}
 
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> <!-- Bootstrap JS -->
+    <!-- Form to input declaration number -->
+    <form action="{{ url_for('main.manage_balance') }}" method="POST">
+        <div class="form-group">
+            <label for="declaration_number" class="form-label">Declaration Number</label>
+            <input type="text" class="form-control" id="declaration_number" name="declaration_number" placeholder="Enter declaration number" required>
+        </div>
+        <button type="submit" class="btn">Search</button>
+    </form>
+
+    <!-- Display the balance items if found -->
+    {% if balance_items %}
+    <h3 class="mt-5">Current Balance Items</h3>
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Declaration Number</th>
+            <th>Item Name</th>
+            <th>Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in balance_items %}
+        <tr>
+            <td>{{ item.declaration_number }}</td>
+            <td>{{ item.item_name }}</td>
+            <td>{{ item.amount }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="mt-4 text-center">No items to display. Please search using a declaration number.</p>
+    {% endif %}
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> <!-- Bootstrap JS -->
 </body>
 </html>

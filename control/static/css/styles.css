@@ -1,0 +1,95 @@
+/* custom-styles.css */
+
+/* Custom navbar styling */
+.navbar-custom {
+    background-color: #057705 !important;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+ 
+
+ 
+/* Hover effect for dropdown items */
+.dropdown-menu .nav-link:hover {
+    background-color: #e2e6ea; /* Background color on hover */
+    color: #0056b3; /* Text color on hover */
+}
+
+/* Active item style */
+.dropdown-menu .nav-link.active {
+    background-color: #007bff; /* Background color for active item */
+    color: #ffffff; /* Text color for active item */
+}
+/* Ensure nav-link text color is applied */
+.navbar-custom .navbar-nav .nav-link {
+    color: #F5F7FA;  /* Set the desired text color */
+    font-weight: bold;
+}
+.dropdown-menu .nav-link {
+    color: #F5F7FA;  /* Set the desired text color */
+    font-weight: bold;
+}
+.navbar-nav .nav-link {
+    color: #F5F7FA;  /* Set the desired text color */
+    font-weight: bold; 
+    margin-left: 18%;
+    margin-right: 18%;
+}
+
+.navbar-nav {
+    width: 100%; 
+    margin-left: 18%;
+    margin-right: 18%;
+}
+
+.navbar-nav .nav-link {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #c70039;  /* Change color on hover */
+}
+.somespace {
+    
+    margin-left: 18%;
+}
+.somespace img {
+    height: 1000px; /* Increase the size of the image */
+    width: auto;  /* Maintain aspect ratio */
+}
+#navbarDropdownMenuLink {
+    color: #f8f8f2 /* White cream color */
+}
+.carousel-inner img {
+    width: 100%; /* Full width */
+    height: 20vh; /* 20% of the viewport height */
+    object-fit: cover; /* Ensure the image covers the div proportionally */
+}
+form {
+    max-width: 300px; /* Limit the width of the form */
+    margin: 0%;   /* Center the form */
+    background-color: #5cb85c; /* Set green background color */
+    padding: 20px; /* Add padding inside the form */
+    border: 2px  #004d00; /* Add a darker green border */
+    border-radius: 0px; /* Make the border sharp (no rounded corners) */
+    height: 20%; /* Reduce the form height by 30% */
+}
+
+form input {
+    margin-bottom: 15px; /* Add spacing between fields */
+    width: 80%; /* Reduce the width of the input fields by 20% */
+    height: 90%; /* Reduce the height of the input fields by 10% */
+}
+
+form button {
+    width: 30%; /* Make the button fill the form's width */
+    border-radius: 0px; 
+}
+body{
+    background-color: #F5F7FA;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #c70039;  /* Change color on hover */
+}

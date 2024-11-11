@@ -1,0 +1,50 @@
+{% extends 'index.html' %}
+
+{% block title %}User Dashboard{% endblock %}
+{% block nav %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-custom">        
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <!-- Dropdown Menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" style="margin-left: 120px;" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Import
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="margin-left: 120px; color:bisque;">
+                    <a class="nav-link" style="color:rgb(141, 84, 15);" href="{{ url_for('main.register_declared') }}">Declare</a>
+                    <a class="nav-link" style="color:rgb(141, 84, 15);" href="{{ url_for('main.search_registered') }}">Imported</a>
+                    <a class="nav-link" style="color:rgb(141, 84, 15);" href="{{ url_for('main.manage_balance') }}">Balance</a>
+                   
+                </div>
+                
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" style="margin-left: 120px;" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Ticket
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="margin-left: 120px; color: bisque; ">
+                    <a class="nav-link" style="color: rgb(141, 84, 15); white-space: nowrap;" href="{{ url_for('main.create_ticket') }}">Create Ticket</a>
+                    <a class="nav-link" style="color: rgb(141, 84, 15); white-space: nowrap;" href="{{ url_for('main.list_tickets') }}">Search Ticket</a>
+                </div>
+                
+            </li>
+            <li class="nav-item" style="margin-left: 150%;">
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+            </li>
+        </ul>
+    </div>
+    
+</nav>
+{% endblock %}
+ 
+{% block slide %}
+<!-- Leave this block empty if you don't want any slides -->
+{% endblock %}
+
+{% block content %}
+   {% if msg %}
+    <p>Welcome! {{ msg }}</p>  <!-- Display the username -->
+    <!-- Additional user-specific content goes here -->
+    {% endif %}
+{% endblock %}
